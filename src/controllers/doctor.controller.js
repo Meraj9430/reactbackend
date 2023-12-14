@@ -30,6 +30,7 @@ export const GetDoctorById = asyncHandler(async (req, res) => {
   const result = await getDoctorById(id);
   res.status(200).send({ result });
 });
+
 export const GetDoctor = asyncHandler(async (req, res) => {
   try {
     const { page, size, search, sort } = req.query;
@@ -39,18 +40,22 @@ export const GetDoctor = asyncHandler(async (req, res) => {
       size: parseInt(size) || 10,
     };
 
-    const filter = {
-      $or: [
-        { city: { $regex: search || "", $options: "i" } },
-        { specialization: { $regex: search || "", $options: "i" } },
+    const filter = {};
+
+    // Check if "search" is provided and add conditions accordingly
+    if (search) {
+      filter.$or = [
+        { city: { $regex: search, $options: "i" } },
+        { specialization: { $regex: search, $options: "i" } },
         // Add more conditions if needed
-      ],
-    };
+      ];
+    }
 
     const sortingOptions = sort ? sort.split(",") : ["", ""];
     const sortByField = sortingOptions[0];
     const sortDirection = sortingOptions[1];
     const sortBy = {};
+
     if (sortByField) {
       sortBy[sortByField] = sortDirection;
     } else {
@@ -66,15 +71,11 @@ export const GetDoctor = asyncHandler(async (req, res) => {
     });
   }
 });
+
 export const DeleteDoctor = asyncHandler(async (req, res) => {
   const result = await deletedoctor(req, res);
 });
 
 export const UpdateDoctor = asyncHandler(async (req, res) => {
-  const id = req.params.id;
-  const updatedData = req.body;
-  const success = await updateDoctor(id, updatedData, {
-    new: true,
-  });
-  res.status(200).send({ success });
+  const success = await updateDoctor(req, res);
 });

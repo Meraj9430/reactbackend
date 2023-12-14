@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post("/addDoctor", AddDoctor);
 router.get("/getDoctor", GetDoctor);
-router.delete("/deteteDoctor/:id", DeleteDoctor);
+router.delete("/deleteDoctor/:id", DeleteDoctor);
 router.put("/updateDoctor/:id", UpdateDoctor);
 router.get("/getDoctorById/:id", GetDoctorById);
 
