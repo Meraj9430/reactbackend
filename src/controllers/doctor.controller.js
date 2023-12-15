@@ -8,20 +8,6 @@ import {
 } from "../services/doctorService.js";
 
 export const AddDoctor = asyncHandler(async (req, res) => {
-  const {
-    name,
-    specialization,
-    photo,
-    city,
-    experience,
-    availableDays,
-    availableTime,
-    fee,
-    description,
-    email,
-    phone,
-  } = req.body;
-
   const doctor = await addDoctor(req, res);
 });
 
