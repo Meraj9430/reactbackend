@@ -11,7 +11,6 @@ cloudinary.config({
 export const addDoctor = asyncHandler(async (req, res) => {
   console.log(req.body);
   try {
-    // const { Photo } = req.body;
     const {
       photo,
       registration,
@@ -30,66 +29,31 @@ export const addDoctor = asyncHandler(async (req, res) => {
 
     const { extra_mobile, languages, physical_info, virtual } = req.body;
 
-    // const { medical_registration_proof, degree_proof, govt_id_proof } =
-    //   req.body;
+    const { medical_registration_proof, degree_proof, govt_id_proof } =
+      req.body;
 
-    // const uploadPhoto = req.body.Upload_Photo;
+    const uploadPhoto = req.body;
 
     const file = req.files.Photo;
+    const file2 = req.files.Photo2;
+    const file3 = req.files.Photo3;
+    const file4 = req.files.Photo4;
+    const file5 = req.files.Photo5;
 
-    if (!file) {
+    if ((!file && !file2 && !file3 && !file4) || !file5) {
       return res.status(400).json({
         success: false,
         error: "Photo is required.",
       });
     }
 
-    // const file2 = req.files.Photo;
-
-    // if (!file2) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     error: "Photo is required.",
-    //   });
-    // }
-
-    // const file3 = req.files.Photo;
-
-    // if (!file3) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     error: "Photo is required.",
-    //   });
-    // }
-
-    // const file4 = req.files.Photo;
-
-    // if (!file4) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     error: "Photo is required.",
-    //   });
-    // }
-
-    // const file5 = req.files.Photo;
-
-    // if (!file5) {
-    //   return res.status(400).json({
-    //     success: false,
-    //     error: "Photo is required.",
-    //   });
-    // }
-
-    // // Assuming cloudinary is used for image upload, modify this based on your setup
     const result = await cloudinary.uploader.upload(file.tempFilePath);
-    // const result2 = await cloudinary.uploader.upload(file2.tempFilePath);
-    // const result3 = await cloudinary.uploader.upload(file3.tempFilePath);
-    // const result4 = await cloudinary.uploader.upload(file4.tempFilePath);
-    // const result5 = await cloudinary.uploader.upload(file5.tempFilePath);
+    const result2 = await cloudinary.uploader.upload(file2.tempFilePath);
+    const result3 = await cloudinary.uploader.upload(file3.tempFilePath);
+    const result4 = await cloudinary.uploader.upload(file4.tempFilePath);
+    const result5 = await cloudinary.uploader.upload(file5.tempFilePath);
 
     const doctor = await Doctor.create({
-      // photo: result.secure_url,
-
       photo: result.secure_url,
 
       registration,
@@ -115,11 +79,11 @@ export const addDoctor = asyncHandler(async (req, res) => {
       physical_info,
       virtual,
 
-      // medical_registration_proof: result2.secure_url,
-      // degree_proof: result3.secure_url,
-      // govt_id_proof: result4.secure_url,
+      medical_registration_proof: result2.secure_url,
+      degree_proof: result3.secure_url,
+      govt_id_proof: result4.secure_url,
 
-      // Upload_Photo: result5.secure_url,
+      Upload_Photo: result5.secure_url,
     });
 
     res.status(201).json({

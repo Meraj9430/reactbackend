@@ -54,11 +54,11 @@ const doctorSchema = new mongoose.Schema({
   physical_info: { type: String },
   virtual: { type: String },
 
-  // medical_registration_proof: { type: String },
-  // degree_proof: { type: String },
-  // govt_id_proof: { type: String },
+  medical_registration_proof: { type: String },
+  degree_proof: { type: String },
+  govt_id_proof: { type: String },
 
-  // Upload_Photo: { type: String },
+  Upload_Photo: { type: String, enum: [] },
 });
 
 export default mongoose.model("Doctor", doctorSchema);
