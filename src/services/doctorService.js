@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 import Doctor from "../modles/doctorsSchema.js";
 import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+import path from "path";
 
 cloudinary.config({
   cloud_name: "dydfngksk",
@@ -34,27 +36,40 @@ export const addDoctor = asyncHandler(async (req, res) => {
 
     const uploadPhoto = req.body;
 
-    const file = req.files.Photo;
-    const file2 = req.files.Photo2;
-    const file3 = req.files.Photo3;
-    const file4 = req.files.Photo4;
-    const file5 = req.files.Photo5;
+    let profilePictureUrl = "";
+    let profilePictureUrl2 = "";
+    let profilePictureUrl3 = "";
+    let profilePictureUrl4 = "";
+    let profilePictureUrl5 = "";
 
-    if ((!file && !file2 && !file3 && !file4) || !file5) {
-      return res.status(400).json({
-        success: false,
-        error: "Photo is required.",
-      });
+    if (req.files && req.files.Photo) {
+      const file = req.files.Photo;
+      const result = await cloudinary.uploader.upload(file.tempFilePath);
+      profilePictureUrl = result.secure_url;
+    }
+    if (req.files && req.files.Photo2) {
+      const file = req.files.Photo2;
+      const result = await cloudinary.uploader.upload(file.tempFilePath);
+      profilePictureUrl2 = result.secure_url;
+    }
+    if (req.files && req.files.Photo3) {
+      const file = req.files.Photo3;
+      const result = await cloudinary.uploader.upload(file.tempFilePath);
+      profilePictureUrl3 = result.secure_url;
+    }
+    if (req.files && req.files.Photo4) {
+      const file = req.files.Photo4;
+      const result = await cloudinary.uploader.upload(file.tempFilePath);
+      profilePictureUrl4 = result.secure_url;
+    }
+    if (req.files && req.files.Photo5) {
+      const file = req.files.Photo5;
+      const result = await cloudinary.uploader.upload(file.tempFilePath);
+      profilePictureUrl5 = result.secure_url;
     }
 
-    const result = await cloudinary.uploader.upload(file.tempFilePath);
-    const result2 = await cloudinary.uploader.upload(file2.tempFilePath);
-    const result3 = await cloudinary.uploader.upload(file3.tempFilePath);
-    const result4 = await cloudinary.uploader.upload(file4.tempFilePath);
-    const result5 = await cloudinary.uploader.upload(file5.tempFilePath);
-
     const doctor = await Doctor.create({
-      photo: result.secure_url,
+      photo: profilePictureUrl,
 
       registration,
       name,
@@ -79,13 +94,13 @@ export const addDoctor = asyncHandler(async (req, res) => {
       physical_info,
       virtual,
 
-      medical_registration_proof: result2.secure_url,
-      degree_proof: result3.secure_url,
-      govt_id_proof: result4.secure_url,
+      medical_registration_proof: profilePictureUrl2,
+      degree_proof: profilePictureUrl3,
+      govt_id_proof: profilePictureUrl4,
 
-      Upload_Photo: result5.secure_url,
+      Upload_Photo: profilePictureUrl5,
     });
-
+    // deleteFile();
     res.status(201).json({
       success: true,
       data: doctor,
@@ -180,3 +195,27 @@ export const updateDoctor = asyncHandler(async (req, res) => {
     });
   }
 });
+const deleteFile = () => {
+  const __filename = new URL(import.meta.url).pathname;
+  const _dirname = path.dirname(_filename);
+
+  const dirPath = decodeURIComponent(
+    path.join(__dirname, "../../tmp").slice(1).replace(/\\/g, "/")
+  );
+
+  if (fs.existsSync(dirPath)) {
+    // Read the contents of the directory
+    const files = fs.readdirSync(dirPath);
+
+    // Iterate over the files and remove them
+    files.forEach((file) => {
+      const curPath = path.join(dirPath, file);
+      fs.unlinkSync(curPath);
+    });
+
+    // Remove the empty directory
+    fs.rmdirSync(dirPath);
+  } else {
+    console.log(`Directory '${dirPath}' does not exist.`);
+  }
+};
