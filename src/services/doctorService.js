@@ -20,6 +20,7 @@ export const addDoctor = asyncHandler(async (req, res) => {
       mobile,
       email,
       qualification,
+      specialization,
       experience,
       gender,
       age,
