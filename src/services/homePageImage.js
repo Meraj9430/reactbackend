@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import Doctor from "../modles/doctorsSchema.js";
+import Image from "../modles/userHome/homepageImage.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import path from "path";
@@ -10,37 +10,16 @@ cloudinary.config({
   api_secret: "32DlqJNslNvK9cGxW8Y-s6k08kI",
 });
 
-export const addDoctor = asyncHandler(async (req, res) => {
+export const addImage = asyncHandler(async (req, res) => {
   console.log(req.body);
   try {
-    const {
-      photo,
-      registration,
-      name,
-      mobile,
-      email,
-      qualification,
-      experience,
-      gender,
-      age,
-      blood_group,
-    } = req.body;
-
-    const { house_street_no, colony_locality, city, state, country, pincode } =
-      req.body;
-
-    const { extra_mobile, languages, physical_info, virtual } = req.body;
-
-    const { medical_registration_proof, degree_proof, govt_id_proof } =
-      req.body;
-
-    const uploadPhoto = req.body;
+    const { photo, photo2, photo3, photo4 } = req.body;
 
     let profilePictureUrl = "";
     let profilePictureUrl2 = "";
     let profilePictureUrl3 = "";
     let profilePictureUrl4 = "";
-    let profilePictureUrl5 = "";
+    //     let profilePictureUrl5 = "";
 
     if (req.files && req.files.Photo) {
       const file = req.files.Photo;
@@ -62,48 +41,23 @@ export const addDoctor = asyncHandler(async (req, res) => {
       const result = await cloudinary.uploader.upload(file.tempFilePath);
       profilePictureUrl4 = result.secure_url;
     }
-    if (req.files && req.files.Photo5) {
-      const file = req.files.Photo5;
-      const result = await cloudinary.uploader.upload(file.tempFilePath);
-      profilePictureUrl5 = result.secure_url;
-    }
+    //     if (req.files && req.files.Photo5) {
+    //       const file = req.files.Photo5;
+    //       const result = await cloudinary.uploader.upload(file.tempFilePath);
+    //       profilePictureUrl5 = result.secure_url;
+    //     }
 
-    const doctor = await Doctor.create({
+    const image = await Image.create({
       photo: profilePictureUrl,
-
-      registration,
-      name,
-      mobile,
-      email,
-      qualification,
-      specialization,
-      experience,
-      gender,
-      age,
-      blood_group,
-
-      house_street_no,
-      colony_locality,
-      city,
-      state,
-      country,
-      pincode,
-
-      extra_mobile,
-      languages,
-      physical_info,
-      virtual,
-
-      medical_registration_proof: profilePictureUrl2,
-      degree_proof: profilePictureUrl3,
-      govt_id_proof: profilePictureUrl4,
-
-      Upload_Photo: profilePictureUrl5,
+      photo2: profilePictureUrl2,
+      photo3: profilePictureUrl3,
+      photo4: profilePictureUrl4,
+      //       photo5: profilePictureUrl5,
     });
-    // deleteFile();
+    //     deleteFile();
     res.status(201).json({
       success: true,
-      data: doctor,
+      data: image,
     });
   } catch (error) {
     res.status(400).json({
@@ -113,17 +67,17 @@ export const addDoctor = asyncHandler(async (req, res) => {
   }
 });
 
-export const getDoctorById = asyncHandler(async (id) => {
-  const success = await Doctor.findById(id);
+export const getImageById = asyncHandler(async (id) => {
+  const success = await Image.findById(id);
   console.log(success);
   return success;
 });
 
-export const getDoctor = asyncHandler(
+export const getImage = asyncHandler(
   async (paginationOptions, filter, sort) => {
     try {
       const { page, size } = paginationOptions;
-      const totalDocuments = await Doctor.countDocuments(filter);
+      const totalDocuments = await Image.countDocuments(filter);
       const totalPages = Math.ceil(totalDocuments / size);
       const skip = (page - 1) * size;
 
@@ -132,7 +86,7 @@ export const getDoctor = asyncHandler(
         strength: 2,
       };
 
-      const success = await Doctor.find(filter)
+      const success = await Image.find(filter)
         .collation(collation)
         .sort(sort)
         .skip(skip)
@@ -152,9 +106,9 @@ export const getDoctor = asyncHandler(
     }
   }
 );
-export const deletedoctor = asyncHandler(async (req, res) => {
+export const deleteimage = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const success = await Doctor.findByIdAndDelete(id);
+  const success = await Image.findByIdAndDelete(id);
   if (success) {
     res.status(200).send({ success, message: "Ok deleted ......" });
   } else {
@@ -162,7 +116,7 @@ export const deletedoctor = asyncHandler(async (req, res) => {
     return { error: "not deleted..." };
   }
 });
-export const updateDoctor = asyncHandler(async (req, res) => {
+export const updateImage = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
     const updatedData = req.body;
@@ -173,20 +127,20 @@ export const updateDoctor = asyncHandler(async (req, res) => {
       updatedData.ProfilePicture = result.secure_url;
     }
 
-    const updatedDoctor = await Doctor.findByIdAndUpdate(id, updatedData, {
+    const updatedImage = await Image.findByIdAndUpdate(id, updatedData, {
       new: true,
     });
 
-    if (!updatedDoctor) {
+    if (!updatedImage) {
       return res.status(404).json({
         success: false,
-        error: "Doctor not found",
+        error: "Image not found",
       });
     }
-
+    //     deleteFile()
     res.status(200).json({
       success: true,
-      data: updatedDoctor,
+      data: updatedImage,
     });
   } catch (error) {
     res.status(400).json({
