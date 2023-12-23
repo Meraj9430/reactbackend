@@ -4,11 +4,15 @@ import {
   deletedoctor,
   getDoctor,
   getDoctorById,
+  loginDoctor,
   updateDoctor,
 } from "../services/doctorService.js";
 
 export const AddDoctor = asyncHandler(async (req, res) => {
   const doctor = await addDoctor(req, res);
+});
+export const LoginDoctor = asyncHandler(async (req, res) => {
+  const doctor = await loginDoctor(req, res);
 });
 
 export const GetDoctorById = asyncHandler(async (req, res) => {

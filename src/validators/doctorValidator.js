@@ -2,7 +2,7 @@ import Joi from "joi";
 
 const doctorValidation = Joi.object({
   photo: Joi.string(),
-
+  password: Joi.string(),
   registration: Joi.string(),
   name: Joi.string(),
   mobile: Joi.string()

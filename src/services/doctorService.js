@@ -3,6 +3,8 @@ import Doctor from "../modles/doctorsSchema.js";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
 import path from "path";
+// import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 cloudinary.config({
   cloud_name: "dydfngksk",
@@ -15,6 +17,7 @@ export const addDoctor = asyncHandler(async (req, res) => {
   try {
     const {
       photo,
+      password,
       registration,
       name,
       mobile,
@@ -71,7 +74,7 @@ export const addDoctor = asyncHandler(async (req, res) => {
 
     const doctor = await Doctor.create({
       photo: profilePictureUrl,
-
+      password,
       registration,
       name,
       mobile,
@@ -111,6 +114,50 @@ export const addDoctor = asyncHandler(async (req, res) => {
       success: false,
       error: error.message,
     });
+  }
+});
+
+export const loginDoctor = asyncHandler(async (req, res) => {
+  const { email, mobile, password } = req.body;
+
+  try {
+    let doctor;
+
+    // Check if the user exists with the provided email
+    doctor = await Doctor.findOne({ mobile });
+
+    if (doctor) {
+      // If the user was not found by email, check with mobile
+      doctor = await Doctor.findOne({ email });
+    }
+
+    if (doctor && doctor.password === password) {
+      // Password is correct
+
+      // Create JWT token
+      const accessToken = jwt.sign(
+        {
+          doctorData: {
+            doctorname: doctor.name,
+            email: doctor.email,
+            mobile: doctor.mobile,
+            id: doctor.id,
+          },
+        },
+        process.env.secretKey,
+        { expiresIn: process.env.Range }
+      );
+
+      res.status(200).json({
+        token: accessToken,
+      });
+    } else {
+      // User or password is wrong
+      res.status(401).json({ message: "User or Password is Wrong" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
   }
 });
 

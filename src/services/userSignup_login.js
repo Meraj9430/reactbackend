@@ -1,20 +1,28 @@
+// userController.js
 import asyncHandler from "express-async-handler";
 import User from "../modles/userSignup_login.js";
-import bcrypt from "bcrypt";
+// import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const addUser = asyncHandler(async (req, res) => {
+import sendOTPviaSMS from "../middleware/sendOtp.js"; // Implement this function
+
+export const signUp = asyncHandler(async (req, res) => {
   try {
-    const { FirstName, LastName, Email, Password } = req.body;
-    // const { City, State, ZipCode, Country } = Address;
+    const { FirstName, MobileNumber } = req.body;
 
-    const hashpassword = await bcrypt.hash(Password, 10);
+    // Check if the user already exists
+    const existingUser = await User.findOne({ MobileNumber });
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        error: "User with this mobile number already exists.",
+      });
+    }
 
+    // Create a new user with name and mobile number
     const user = await User.create({
       FirstName,
-      LastName,
-      Email,
-      Password: hashpassword, // Use the hashed password
+      MobileNumber,
     });
 
     res.status(201).json({
@@ -29,90 +37,70 @@ export const addUser = asyncHandler(async (req, res) => {
   }
 });
 
-export const loginUser = asyncHandler(async (req, res) => {
-  const { Email, Password } = req.body;
+export const createOtp = asyncHandler(async (req, res) => {
+  const {  MobileNumber } = req.body;
 
-  const user = await User.findOne({ Email });
+  const user = await User.findOne({  MobileNumber });
 
-  if (user && (await bcrypt.compare(Password, user.Password))) {
+  if (user) {
+    const otp = generateOTP(); // Use the otpGenerator function
+    user.otp = otp;
+    await user.save();
+
+    sendOTPviaSMS(user.MobileNumber, otp); // Implement this function
+
+    res.status(200).json({
+      success: true,
+      message: "OTP sent successfully.",
+    });
+  } else {
+    res.status(404).json({
+      success: false,
+      error: "User not found.",
+    });
+  }
+});
+
+export const verifyOtp = asyncHandler(async (req, res) => {
+  const {  OTP } = req.body;
+
+  const user = await User.findOne({  MobileNumber });
+
+  if (user && user.otp && user.otp === OTP) {
+    // Clear the OTP after successful login
+    user.otp = null;
+    await user.save();
+
+    // Proceed with login logic
     const accessToken = jwt.sign(
       {
         userData: {
           username: user.FirstName,
-          email: user.Email,
+          mobileNumber: user.MobileNumber,
           id: user.id,
-          roleId: user.roleId,
+         
         },
       },
       process.env.secretKey,
       { expiresIn: process.env.Range }
     );
-    //console.log(accessToken)
-    return {
+
+    res.status(200).json({
+      success: true,
       token: accessToken,
-      roleid: user.roleId,
-    };
+      // roleid: user.roleId,
+    });
   } else {
-    res.status(401);
-    throw new Error("User or Password is Wrong");
+    res.status(401).json({
+      success: false,
+      error: "Invalid OTP or user not found.",
+    });
   }
 });
 
-export const getUsers = asyncHandler(
-  async (paginationOptions, filter, sort) => {
-    try {
-      const { page, size } = paginationOptions;
-      const totalDocuments = await User.countDocuments(filter);
-      const totalPages = Math.ceil(totalDocuments / size);
-      const skip = (page - 1) * size;
 
-      const collation = {
-        locale: "en",
-        strength: 2,
-      };
-
-      const success = await User.find(filter)
-        .collation(collation)
-        .sort(sort)
-        .skip(skip)
-        .limit(size)
-        .populate("roleId");
-
-      return {
-        page,
-        size,
-        data: success,
-        previousPage: page > 1 ? page - 1 : null,
-        nextPage: page < totalPages ? page + 1 : null,
-        totalDocuments,
-      };
-    } catch (e) {
-      console.log(e);
-      throw new Error(e);
-    }
-  }
-);
-
-export const deleteUser = asyncHandler(async (req, res) => {
-  const id = req.params.id;
-  const success = await User.findByIdAndDelete(id);
-  if (success) {
-    res.status(200).send({ success, message: "Ok deleted ......" });
-  } else {
-    return { error: "not deleted..." };
-  }
-});
-
-export const getUserById = asyncHandler(async (id) => {
-  const success = await User.findById(id).populate("roleId");
-  console.log(success);
-  return success;
-});
-
-export const updateUser = asyncHandler(async (id, updatedData) => {
-  const success = await User.findByIdAndUpdate(id, updatedData, {
-    new: true,
-  });
-  console.log(success);
-  return success;
-});
+function generateOTP() {
+  // Generate a random 4-digit OTP
+  const otp = Math.floor(1000 + Math.random() * 9000);
+  return otp.toString();
+}

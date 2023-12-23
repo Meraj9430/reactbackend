@@ -5,6 +5,7 @@ import {
   DeleteDoctor,
   GetDoctor,
   GetDoctorById,
+  LoginDoctor,
   UpdateDoctor,
 } from "../controllers/doctor.controller.js";
 import { doctorValidation } from "../validators/doctorValidator.js";
@@ -25,5 +26,5 @@ router.get("/getDoctor", GetDoctor);
 router.delete("/deleteDoctor/:id", DeleteDoctor);
 router.put("/updateDoctor/:id", validatedoctor, UpdateDoctor);
 router.get("/getDoctorById/:id", GetDoctorById);
-
+router.post("/login", LoginDoctor);
 export default router;
