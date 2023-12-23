@@ -30,6 +30,14 @@ export const addDoctor = asyncHandler(async (req, res) => {
       blood_group,
     } = req.body;
 
+    const existingDoctor = await Doctor.findOne({ email });
+    if (existingDoctor) {
+      return res.status(400).json({
+        success: false,
+        error: "Doctor email already exists.",
+      });
+    }
+
     const { house_street_no, colony_locality, city, state, country, pincode } =
       req.body;
 

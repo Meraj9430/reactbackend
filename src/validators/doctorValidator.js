@@ -9,6 +9,16 @@ const doctorValidation = Joi.object({
     .length(10)
     .pattern(/^[0-9]+$/),
   email: Joi.string().email(),
+  password: Joi.string()
+    .pattern(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/)
+    .min(8)
+    .required()
+    .messages({
+      "string.pattern.base":
+        "Password must have at least one alphabet, one digit, and one symbol.",
+      "string.min": "Password must be at least 8 characters long.",
+      "any.required": "Password is required.",
+    }),
   qualification: Joi.string(),
   specialization: Joi.string(),
   experience: Joi.number(),
