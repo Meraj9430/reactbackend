@@ -1,6 +1,5 @@
 import asyncHandler from "express-async-handler";
 import User from "../modles/userSignup_login.js";
-import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 export const addUser = asyncHandler(async (req, res) => {
@@ -53,6 +52,7 @@ export const loginUser = asyncHandler(async (req, res) => {
     return {
       token: accessToken,
       roleid: user.roleId,
+      userId: user.id,
     };
   } else {
     res.status(401);
@@ -77,8 +77,8 @@ export const getUsers = asyncHandler(
         .collation(collation)
         .sort(sort)
         .skip(skip)
-        .limit(size)
-        .populate("roleId");
+        .limit(size);
+      // .populate("roleId");
 
       return {
         page,
@@ -106,7 +106,8 @@ export const deleteUser = asyncHandler(async (req, res) => {
 });
 
 export const getUserById = asyncHandler(async (id) => {
-  const success = await User.findById(id).populate("roleId");
+  const success = await User.findById(id);
+  // .populate("roleId");
   console.log(success);
   return success;
 });
