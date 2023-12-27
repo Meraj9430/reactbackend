@@ -82,6 +82,7 @@ export const addDoctor = asyncHandler(async (req, res) => {
 
     const doctor = await Doctor.create({
       photo: profilePictureUrl,
+      doctorTimeDateId,
       password,
       registration,
       name,
@@ -158,6 +159,7 @@ export const loginDoctor = asyncHandler(async (req, res) => {
 
       res.status(200).json({
         token: accessToken,
+        doctorId: doctor.id,
       });
     } else {
       // User or password is wrong
@@ -190,6 +192,7 @@ export const getDoctor = asyncHandler(
 
       const success = await Doctor.find(filter)
         .collation(collation)
+        .populate("doctorTimeDateId")
         .sort(sort)
         .skip(skip)
         .limit(size);

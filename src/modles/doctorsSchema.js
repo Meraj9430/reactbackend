@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const doctorSchema = new mongoose.Schema({
+  doctorTimeDateId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Doc_Fee_Time",
+  },
   photo: { type: String },
   password: { type: String },
   registration: { type: String },
