@@ -158,16 +158,19 @@ export const loginDoctor = asyncHandler(async (req, res) => {
       );
 
       res.status(200).json({
+        success: true,
         token: accessToken,
         doctorId: doctor.id,
       });
     } else {
       // User or password is wrong
-      res.status(401).json({ message: "User or Password is Wrong" });
+      res
+        .status(401)
+        .json({ success: false, message: "User or Password is Wrong" });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 });
 
