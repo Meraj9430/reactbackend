@@ -27,7 +27,7 @@ export const GetDoctor = asyncHandler(async (req, res) => {
 
     const paginationOptions = {
       page: parseInt(page) || 1,
-      size: parseInt(size) || 10,
+      size: parseInt(size) || 100000,
     };
 
     const filter = {};

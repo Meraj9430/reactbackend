@@ -17,6 +17,7 @@ export const addDoctor = asyncHandler(async (req, res) => {
   try {
     const {
       photo,
+      doctorTimeDateId,
       password,
       registration,
       name,
@@ -110,7 +111,6 @@ export const addDoctor = asyncHandler(async (req, res) => {
       medical_registration_proof: profilePictureUrl2,
       degree_proof: profilePictureUrl3,
       govt_id_proof: profilePictureUrl4,
-
       Upload_Photo: profilePictureUrl5,
     });
     // deleteFile();
@@ -175,7 +175,7 @@ export const loginDoctor = asyncHandler(async (req, res) => {
 });
 
 export const getDoctorById = asyncHandler(async (id) => {
-  const success = await Doctor.findById(id);
+  const success = await Doctor.findById(id).populate("doctorTimeDateId");
   console.log(success);
   return success;
 });
