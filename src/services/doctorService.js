@@ -16,6 +16,7 @@ export const addDoctor = asyncHandler(async (req, res) => {
   console.log(req.body);
   try {
     const {
+      interval,
       days,
       start_time,
       end_time,
@@ -89,6 +90,7 @@ export const addDoctor = asyncHandler(async (req, res) => {
     }
 
     const doctor = await Doctor.create({
+      interval,
       days,
       start_time,
       end_time,

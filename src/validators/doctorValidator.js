@@ -1,13 +1,14 @@
 import Joi from "joi";
 
 const doctorValidation = Joi.object({
+  interval: Joi.string(),
   days: Joi.string(),
-  start_time:Joi.string(),
-  end_time:Joi.string(),
-  fee:Joi.string(),
-  morning:Joi.string(),
-  afternoon:Joi.string(),
-  evening:Joi.string(),
+  start_time: Joi.string(),
+  end_time: Joi.string(),
+  fee: Joi.string(),
+  morning: Joi.string(),
+  afternoon: Joi.string(),
+  evening: Joi.string(),
   doctorTimeDateId: Joi.string(),
   photo: Joi.string(),
   password: Joi.string(),

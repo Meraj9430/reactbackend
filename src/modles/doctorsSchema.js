@@ -5,6 +5,7 @@ const doctorSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Doc_Fee_Time",
   },
+
   days: {
     type: [String], // An array of strings representing days
   },
@@ -62,6 +63,7 @@ const doctorSchema = new mongoose.Schema({
       "Otolaryngologists",
     ],
   },
+  interval: { type: String },
   experience: { type: Number },
   gender: { type: String },
   age: { type: Number },
