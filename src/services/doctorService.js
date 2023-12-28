@@ -16,6 +16,13 @@ export const addDoctor = asyncHandler(async (req, res) => {
   console.log(req.body);
   try {
     const {
+      days,
+      start_time,
+      end_time,
+      fee,
+      morning,
+      afternoon,
+      evening,
       photo,
       doctorTimeDateId,
       password,
@@ -82,6 +89,13 @@ export const addDoctor = asyncHandler(async (req, res) => {
     }
 
     const doctor = await Doctor.create({
+      days,
+      start_time,
+      end_time,
+      fee,
+      morning,
+      afternoon,
+      evening,
       photo: profilePictureUrl,
       doctorTimeDateId,
       password,
