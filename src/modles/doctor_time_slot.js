@@ -1,6 +1,10 @@
 import mongoose from "mongoose";
 
 const scheduleSchema = new mongoose.Schema({
+  doctorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Doctor",
+  },
   days: {
     type: [String], // An array of strings representing days
   },

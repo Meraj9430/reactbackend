@@ -224,10 +224,51 @@ export const deletedoctor = asyncHandler(async (req, res) => {
     return { error: "not deleted..." };
   }
 });
+// export const updateDoctor = asyncHandler(async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const updatedData = req.body;
+
+//     if (req.files && req.files.ProfilePicture) {
+//       const file = req.files.ProfilePicture;
+//       const result = await cloudinary.uploader.upload(file.tempFilePath);
+//       updatedData.ProfilePicture = result.secure_url;
+//     }
+
+//     const updatedDoctor = await Doctor.findByIdAndUpdate(id, updatedData, {
+//       new: true,
+//     });
+
+//     if (!updatedDoctor) {
+//       return res.status(404).json({
+//         success: false,
+//         error: "Doctor not found",
+//       });
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       data: updatedDoctor,
+//     });
+//   } catch (error) {
+//     res.status(400).json({
+//       success: false,
+//       error: error.message,
+//     });
+//   }
+// });
+
+import { v4 as uuidv4 } from "uuid";
+
 export const updateDoctor = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
-    const updatedData = req.body;
+    let updatedData = req.body;
+
+    // Generate a random ID if not provided in the request body
+    if (!updatedData.id) {
+      updatedData.id = uuidv4();
+    }
 
     if (req.files && req.files.ProfilePicture) {
       const file = req.files.ProfilePicture;
@@ -257,6 +298,7 @@ export const updateDoctor = asyncHandler(async (req, res) => {
     });
   }
 });
+
 const deleteFile = () => {
   const __filename = new URL(import.meta.url).pathname;
   const _dirname = path.dirname(_filename);

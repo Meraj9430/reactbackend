@@ -4,10 +4,19 @@ import Doctor from "../modles/doctor_time_slot.js";
 export const adddoctor = asyncHandler(async (req, res) => {
   //   console.log(req.body);
   try {
-    const { days, start_time, end_time, fee, morning, afternoon, evening } =
-      req.body;
+    const {
+      doctorId,
+      days,
+      start_time,
+      end_time,
+      fee,
+      morning,
+      afternoon,
+      evening,
+    } = req.body;
 
     const doctor = await Doctor.create({
+      doctorId,
       days,
       start_time,
       end_time,
@@ -47,7 +56,7 @@ export const getDoctor = asyncHandler(
         .sort(sort)
         .skip(skip)
         .limit(size)
-        .populate("roleId");
+        .populate("doctorId");
 
       return {
         page,
@@ -75,7 +84,7 @@ export const deleteDoctor = asyncHandler(async (req, res) => {
 });
 
 export const getDoctorById = asyncHandler(async (id) => {
-  const success = await Doctor.findById(id).populate("roleId");
+  const success = await Doctor.findById(id).populate("doctorId");
   console.log(success);
   return success;
 });
