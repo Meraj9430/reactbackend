@@ -5,7 +5,10 @@ const doctorSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Doc_Fee_Time",
   },
-
+  doctorTimeDateId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Doc_Fee_Time",
+  },
   days: {
     type: [String], // An array of strings representing days
   },

@@ -274,16 +274,15 @@ export const deletedoctor = asyncHandler(async (req, res) => {
 //   }
 // });
 
-import { v4 as uuidv4 } from "uuid";
-
 export const updateDoctor = asyncHandler(async (req, res) => {
   try {
     const id = req.params.id;
     let updatedData = req.body;
 
-    // Generate a random ID if not provided in the request body
+    // Generate a random ID between 1000 and 5000 if not provided in the request body
     if (!updatedData.id) {
-      updatedData.id = uuidv4();
+      updatedData.id = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+      // console.log(updatedData.id);
     }
 
     if (req.files && req.files.ProfilePicture) {
@@ -306,6 +305,7 @@ export const updateDoctor = asyncHandler(async (req, res) => {
     res.status(200).json({
       success: true,
       data: updatedDoctor,
+      appoimentId: updatedData.id,
     });
   } catch (error) {
     res.status(400).json({

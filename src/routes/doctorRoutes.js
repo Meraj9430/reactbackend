@@ -24,7 +24,7 @@ const validatedoctor = (req, res, next) => {
 router.post("/addDoctor", validatedoctor, AddDoctor);
 router.get("/getDoctor", GetDoctor);
 router.delete("/deleteDoctor/:id", DeleteDoctor);
-router.put("/updateDoctor/:id", validatedoctor, UpdateDoctor);
+router.put("/updateDoctor/:id", UpdateDoctor);
 router.get("/getDoctorById/:id", GetDoctorById);
 router.post("/login", LoginDoctor);
 export default router;
