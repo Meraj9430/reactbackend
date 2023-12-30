@@ -5,6 +5,8 @@ import fs from "fs";
 import path from "path";
 // import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import Appointment from "../modles/docterUserAppointment.js";
+import { v4 as uuid } from "uuid";
 
 cloudinary.config({
   cloud_name: "dydfngksk",
@@ -129,10 +131,21 @@ export const addDoctor = asyncHandler(async (req, res) => {
       govt_id_proof: profilePictureUrl4,
       Upload_Photo: profilePictureUrl5,
     });
+    const appointmentId = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+
+    // Create an appointment associated with the doctor
+    const appointmentData = {
+      doctorId: doctor._id, // Use the doctor's ID
+      userId: null, // No user ID initially
+      appointmentId: appointmentId,
+    };
+
+    const appointment = await Appointment.create(appointmentData);
     // deleteFile();
     res.status(201).json({
       success: true,
       data: doctor,
+      appointment,
     });
   } catch (error) {
     res.status(400).json({
@@ -279,11 +292,14 @@ export const updateDoctor = asyncHandler(async (req, res) => {
     const id = req.params.id;
     let updatedData = req.body;
 
-    // Generate a random ID between 1000 and 5000 if not provided in the request body
-    if (!updatedData.id) {
-      updatedData.id = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
-      // console.log(updatedData.id);
-    }
+    const appointmentId = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+
+    // Create an appointment associated with the doctor
+    const appointmentData = {
+      doctorId: id, // Use the doctor's ID
+      userId: null, // No user ID initially
+      appointmentId: appointmentId,
+    };
 
     if (req.files && req.files.ProfilePicture) {
       const file = req.files.ProfilePicture;
@@ -301,11 +317,16 @@ export const updateDoctor = asyncHandler(async (req, res) => {
         error: "Doctor not found",
       });
     }
+    const updatedAppointment = await Appointment.findOneAndUpdate(
+      { doctorId: id },
+      { appointmentId: appointmentId },
+      { new: true }
+    );
 
     res.status(200).json({
       success: true,
       data: updatedDoctor,
-      appoimentId: updatedData.id,
+      appointmentId: updatedAppointment.appointmentId,
     });
   } catch (error) {
     res.status(400).json({

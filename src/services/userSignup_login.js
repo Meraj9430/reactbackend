@@ -1,6 +1,8 @@
 import asyncHandler from "express-async-handler";
 import User from "../modles/userSignup_login.js";
 import jwt from "jsonwebtoken";
+import Appointment from "../modles/docterUserAppointment.js";
+import { v4 as uuid } from "uuid";
 
 export const addUser = asyncHandler(async (req, res) => {
   try {
@@ -17,10 +19,21 @@ export const addUser = asyncHandler(async (req, res) => {
       City,
       Referral, // Use the hashed password
     });
+    // const appointmentId = Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000;
+
+    // // Create an appointment associated with the user
+    // const appointmentData = {
+    //   doctorId: null, // No doctor ID initially
+    //   userId: user._id, // Use the user's ID
+    //   appointmentId: appointmentId,
+    // };
+
+    // const appointment = await Appointment.create(appointmentData);
 
     res.status(201).json({
       success: true,
       data: user,
+      // appointment,
     });
   } catch (error) {
     res.status(400).json({
